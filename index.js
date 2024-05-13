@@ -1,8 +1,19 @@
 const express = require('express')
+var morgan = require('morgan')
 
 const app = express()
 
 app.use(express.json())
+
+// Morgan for logging HTTP requests to console
+app.use(morgan('tiny'))
+
+// Morgan custom token
+morgan.token('body', (request, response) => {
+    return JSON.stringify(request.body)
+}) 
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 let persons = [
     {
@@ -27,7 +38,7 @@ let persons = [
     },
 ]
 
-// Get lenght of Array
+// Get length of Array
 const entryLength = persons.length
 
 // Get Date and Time
