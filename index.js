@@ -1,7 +1,10 @@
 const express = require('express')
+const cors = require('cors')
 var morgan = require('morgan')
 
 const app = express()
+
+app.use(cors())
 
 app.use(express.json())
 
@@ -127,6 +130,13 @@ app.get('/info', (request, response) => {
     )
 })
 
-const PORT = 3001
+let PORT;
+
+if (process.env.NODE_ENVIRONMENT) {
+    PORT = 10000
+} else {
+    PORT = 3001
+}
+
 app.listen(PORT)
 console.log(`Server running on ${PORT}`)
