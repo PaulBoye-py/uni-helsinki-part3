@@ -8,6 +8,8 @@ app.use(cors())
 
 app.use(express.json())
 
+app.use(express.static('dist'))
+
 // Morgan for logging HTTP requests to console
 app.use(morgan('tiny'))
 
