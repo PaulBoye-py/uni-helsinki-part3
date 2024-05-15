@@ -1,6 +1,9 @@
+require('dotenv').config(); // Load environment variables
 const express = require('express')
 const cors = require('cors')
 var morgan = require('morgan')
+const Person = require('./models/person')
+
 
 const app = express()
 
@@ -71,20 +74,23 @@ app.get('/', (request, response) => {
     response.send('Hello')
 })
 
-// Get all persons
+// Get all people
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+    Person.find({}).then(people => {
+        response.json(people)
+    })  
 })
 
 // Get a specific person 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-    if (person) {
+    Person.findById(request.params.id)
+        .then(person => {
         response.json(person)
-    } else {
-        response.status(404).end()
-    }
+        console.log(person)
+        })
+        .catch(error => {
+            console.log('error:', error.message)
+        })
 })
 
 // Delete a specific person
@@ -112,16 +118,20 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const person = {
-        id: generateId(),
+    const person = new Person ({
         name: body.name,
         number: body.number
-    }
+    })
 
-    persons = persons.concat(person)
-    // console.log(person)
-    // console.log(persons)
-    response.json(person)
+    // persons = persons.concat(person)
+    person.save()
+        .then(savedPerson => {
+        response.json(savedPerson)
+        console.log(savedPerson)
+        })
+        .catch(error => {
+            console.log('An error occured', error.message)
+        })
 })
 
 app.get('/info', (request, response) => {
